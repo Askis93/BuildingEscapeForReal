@@ -7,12 +7,13 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/InputComponent.h"
 #include "GameFramework/Controller.h"
+#include "Engine.h"
 
 // Sets default values
 ACharacter_BuildingESC::ACharacter_BuildingESC()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComp"));
 	SpringArmComp->SetupAttachment(RootComponent);
 
@@ -22,10 +23,39 @@ ACharacter_BuildingESC::ACharacter_BuildingESC()
 	PlayerMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("PlayerMesh"));
 	PlayerMesh->SetupAttachment(RootComponent);
 
+	SprintSpeedMulti = 1.6f;
 	BaseTurnRate = 45.f;
 	BaseLookUpRate = 45.f;
 }
 
+// Called to bind functionality to input
+void ACharacter_BuildingESC::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	
+	PlayerInputComponent->BindAction("CrouchDown", IE_Pressed, this, &ACharacter_BuildingESC::CrouchDown);
+	PlayerInputComponent->BindAction("CrouchDown", IE_Released, this, &ACharacter_BuildingESC::CrouchUp);
+
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+
+
+	PlayerInputComponent->BindAction("Sprint", IE_Pressed, this, &ACharacter_BuildingESC::StartSprint);
+	PlayerInputComponent->BindAction("Sprint", IE_Released, this, &ACharacter_BuildingESC::EndSprint);
+
+	PlayerInputComponent->BindAxis("MoveForward", this, &ACharacter_BuildingESC::MoveForward);
+	PlayerInputComponent->BindAxis("MoveRight", this, &ACharacter_BuildingESC::MoveRight);
+
+	PlayerInputComponent->BindAction("PickUp", IE_Pressed, this, &ACharacter_BuildingESC::BeginPickUp);
+	PlayerInputComponent->BindAction("PickUp", IE_Released, this, &ACharacter_BuildingESC::EndPickUp);
+
+	PlayerInputComponent->BindAction("ShowInventory", IE_Pressed, this, &ACharacter_BuildingESC::ShowInventory);
+
+	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
+	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+	PlayerInputComponent->BindAxis("TurnAtRate", this, &ACharacter_BuildingESC::TurnAtRate);
+	PlayerInputComponent->BindAxis("LookUpRate", this, &ACharacter_BuildingESC::LookUpRate);
+}
 
 void ACharacter_BuildingESC::MoveForward(float Value)
 {
@@ -61,24 +91,60 @@ void ACharacter_BuildingESC::LookUpRate(float Value)
 	AddControllerPitchInput(Value * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
-
-// Called to bind functionality to input
-void ACharacter_BuildingESC::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void ACharacter_BuildingESC::StartSprint()
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	bIsSprinting = true;
+	GetCharacterMovement()->MaxWalkSpeed *= SprintSpeedMulti;
+}
 
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
-	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+void ACharacter_BuildingESC::EndSprint()
+{
+	bIsSprinting = false;
+	GetCharacterMovement()->MaxWalkSpeed /= SprintSpeedMulti;
+}
 
-	//PlayerInputComponent->BindAction()
-	//PlayerInputComponent->BindAction("Crouch", IE_Released, this, &ACharacter::UnCrouch);
+void ACharacter_BuildingESC::CrouchDown()
+{
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Crouching"));
+	}
+	Crouch();
+}
 
-	PlayerInputComponent->BindAxis("MoveForward", this, &ACharacter_BuildingESC::MoveForward);
-	PlayerInputComponent->BindAxis("MoveRight", this, &ACharacter_BuildingESC::MoveRight);
+void ACharacter_BuildingESC::CrouchUp()
+{
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Stopped Crouching"));
+	}
+	UnCrouch();
+}
 
-	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
-	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
-	PlayerInputComponent->BindAxis("TurnAtRate", this, &ACharacter_BuildingESC::TurnAtRate);
-	PlayerInputComponent->BindAxis("LookUpRate", this, &ACharacter_BuildingESC::LookUpRate);
+void ACharacter_BuildingESC::BeginPickUp()
+{
+	bIsPickingUp = true;
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("PickUp Pressed"));
+	}
+}
+
+void ACharacter_BuildingESC::EndPickUp()
+{
+	bIsPickingUp = false;
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("PickUp Released"));
+	}
+}
+
+void ACharacter_BuildingESC::ShowInventory()
+{
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("This is your inventory"));
+	}
+
 }
 

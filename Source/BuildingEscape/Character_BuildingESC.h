@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Components/CapsuleComponent.h"
+#include "Containers/Array.h"
 #include "Character_BuildingESC.generated.h"
 
 class USpringArmComponent;
@@ -18,6 +20,10 @@ class BUILDINGESCAPE_API ACharacter_BuildingESC : public ACharacter
 public:
 	// Sets default values for this character's properties
 	ACharacter_BuildingESC();
+
+	bool bIsPickingUp = false;
+	//Remove, inventory in component
+	//TArray<FString> Inventory;
 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
@@ -35,11 +41,30 @@ protected:
 	void TurnAtRate(float Value);
 	void LookUpRate(float Value);
 
+	void StartSprint();
+	void EndSprint();
+
+	UFUNCTION()
+	void CrouchDown();
+	UFUNCTION()
+	void CrouchUp();
+
+	void BeginPickUp();
+	void EndPickUp();
+
+	void ShowInventory();
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera")
 	float BaseTurnRate;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera")
 	float BaseLookUpRate;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement")
+		float SprintSpeedMulti;
+
+	UPROPERTY()
+	bool bIsSprinting = false;
 
 
 public:	
