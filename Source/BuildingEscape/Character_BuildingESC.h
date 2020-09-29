@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "Components/CapsuleComponent.h"
 #include "Containers/Array.h"
+#include "InventoryComponent.h"
 #include "Character_BuildingESC.generated.h"
 
 class USpringArmComponent;
@@ -50,9 +51,9 @@ protected:
 	void CrouchUp();
 
 	void BeginPickUp();
-	void EndPickUp();
+	//void EndPickUp();
 
-	void ShowInventory();
+	//void ShowInventory();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera")
 	float BaseTurnRate;
@@ -66,10 +67,21 @@ protected:
 	UPROPERTY()
 	bool bIsSprinting = false;
 
+	class ULineTracer* LineTraceComp;
 
+	class UInventoryComponent* PlayerInventoryComp;
+
+	
+
+	
 public:	
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UInventoryComponent* GetInventoryComp();
+	
+	
+	
 
 };

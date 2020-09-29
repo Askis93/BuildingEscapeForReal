@@ -1,41 +1,67 @@
 // Copyright Erik 2020
 
-#include "Containers/Array.h"
-#include <iostream>
-#include "Engine.h"
 #include "InventoryComponent.h"
+//#include "Containers/Array.h"
+#include "Engine.h"
 
 // Sets default values for this component's properties
 UInventoryComponent::UInventoryComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = false;
-	for (int32 i = 0; i < 3; i++)
-	{
-		Items.Add(i);
-	}
+	PrimaryComponentTick.bCanEverTick = true;
 	
+	TimeRemaining = 50.0f;
 	// ...
 }
 
+void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-// Called when the game starts
+	TimeRemaining -= 0.01f;
+}
+
 void UInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// ...
-	
+	SetupPlayerInput();
 }
+
+void UInventoryComponent::SetupPlayerInput()
+{
+	PlayerInputComponent = GetOwner()->FindComponentByClass<UInputComponent>();
+	if (PlayerInputComponent)
+	{
+		PlayerInputComponent->BindAction("ShowInventory", IE_Pressed, this, &UInventoryComponent::ShowInventoryComp);
+		PlayerInputComponent->BindAction("ShowTime", IE_Pressed, this, &UInventoryComponent::ShowTime);
+	}
+}
+
+void UInventoryComponent::ShowTime()
+{
+	if (GEngine)
+	{
+		FString TheFloatStr = FString::SanitizeFloat(TimeRemaining);
+		FString Time = "Time Remaining is: " + TheFloatStr;
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, *Time);
+	}
+}
+
+void UInventoryComponent::AddTime(float Value)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Please work"));
+	TimeRemaining += 500.0f;
+}
+
 
 void UInventoryComponent::ShowInventoryComp()
 {
-	for (int32 i = 0; i < Items.Num(); i++)
+	for (int32 i : Items)
 	{
 		if (GEngine)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Turquoise, TEXT("Element %i, %s", i, *Items[i]));
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Turquoise, TEXT("TEST"));
 		}
 	}
 	if (GEngine)
@@ -43,5 +69,4 @@ void UInventoryComponent::ShowInventoryComp()
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Turquoise, TEXT("HERE ARE SOME STUFF"));
 	}
 }
-
 

@@ -1,8 +1,8 @@
 // Copyright Erik 2020
 
+#include "TimeItem.h"
 #include "Components/SphereComponent.h"
 #include "Components/StaticMeshComponent.h"
-#include "TimeItem.h"
 
 UTimeItem::UTimeItem()
 {

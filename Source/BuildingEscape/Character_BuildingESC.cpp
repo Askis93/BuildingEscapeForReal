@@ -8,13 +8,15 @@
 #include "Components/InputComponent.h"
 #include "GameFramework/Controller.h"
 #include "InventoryComponent.h"
+#include "LineTracer.h"
+#include "PickUps.h"
 #include "Engine.h"
 
 // Sets default values
 ACharacter_BuildingESC::ACharacter_BuildingESC()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComp"));
 	SpringArmComp->SetupAttachment(RootComponent);
 
@@ -24,10 +26,21 @@ ACharacter_BuildingESC::ACharacter_BuildingESC()
 	PlayerMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("PlayerMesh"));
 	PlayerMesh->SetupAttachment(RootComponent);
 
+	LineTraceComp = CreateDefaultSubobject<ULineTracer>(TEXT("LineTraceComponent"));
+
+	
+
 	SprintSpeedMulti = 1.6f;
 	BaseTurnRate = 45.f;
 	BaseLookUpRate = 45.f;
 }
+
+//void ACharacter_BuildingESC::AddTime(float Value)
+//{
+//
+//}
+
+
 
 // Called to bind functionality to input
 void ACharacter_BuildingESC::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -48,15 +61,25 @@ void ACharacter_BuildingESC::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	PlayerInputComponent->BindAxis("MoveRight", this, &ACharacter_BuildingESC::MoveRight);
 
 	PlayerInputComponent->BindAction("PickUp", IE_Pressed, this, &ACharacter_BuildingESC::BeginPickUp);
-	PlayerInputComponent->BindAction("PickUp", IE_Released, this, &ACharacter_BuildingESC::EndPickUp);
+	//PlayerInputComponent->BindAction("PickUp", IE_Released, this, &ACharacter_BuildingESC::EndPickUp);
 
-	PlayerInputComponent->BindAction("ShowInventory", IE_Pressed, this, &ACharacter_BuildingESC::ShowInventory);
+	//PlayerInputComponent->BindAction("ShowInventory", IE_Pressed, this, &ACharacter_BuildingESC::Interact);
 
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("TurnAtRate", this, &ACharacter_BuildingESC::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &ACharacter_BuildingESC::LookUpRate);
+
+	//PlayerInventoryComp = GetOwner()->FindComponentByClass<UInventoryComponent>();
 }
+
+UInventoryComponent* ACharacter_BuildingESC::GetInventoryComp()
+{
+	UE_LOG(LogTemp, Warning, TEXT("InventCOMPSET!"));
+
+	return PlayerInventoryComp;
+}
+
 
 void ACharacter_BuildingESC::MoveForward(float Value)
 {
@@ -129,24 +152,41 @@ void ACharacter_BuildingESC::BeginPickUp()
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("PickUp Pressed"));
 	}
-}
+	FVector PlayerViewpointLocation;
+	FRotator PlayerViewpointRotation;
 
-void ACharacter_BuildingESC::EndPickUp()
-{
-	bIsPickingUp = false;
-	if (GEngine)
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(OUT PlayerViewpointLocation, OUT PlayerViewpointRotation);
+	
+	FVector Start = PlayerViewpointLocation;
+	FVector End = PlayerViewpointLocation + PlayerViewpointRotation.Vector() * 200.f;
+	AActor* Actor = LineTraceComp->LineTraceSingle(Start, End, true);
+	if (Actor)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("PickUp Released"));
+		UE_LOG(LogTemp, Warning, TEXT("HIT ACTOR: %s"), *Actor->GetName());
+		if (APickUps* PickUp = Cast<APickUps>(Actor))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Actor is a pickup"));
+			PickUp->UseItem(this);
+		}
 	}
 }
+//
+//void ACharacter_BuildingESC::EndPickUp()
+//{
+//	bIsPickingUp = false;
+//	if (GEngine)
+//	{
+//		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("PickUp Released"));
+//	}
+//}
 
-void ACharacter_BuildingESC::ShowInventory()
-{
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("This is your inventory"));
-	}
-	UInventoryComponent::ShowInventoryComp();
-
-}
+//void ACharacter_BuildingESC::ShowInventory()
+//{
+//	if (GEngine)
+//	{
+//		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("This is your inventory"));
+//	}
+//	UInventoryComponent::ShowInventoryComp();
+//
+//}
 

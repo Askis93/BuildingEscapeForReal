@@ -4,8 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Components/InputComponent.h"
 #include "ItemNew.h"
 #include "Containers/Array.h"
+#include "GameFramework/PlayerController.h"
 #include "InventoryComponent.generated.h"
 
 
@@ -18,9 +20,14 @@ public:
 	// Sets default values for this component's properties
 	UInventoryComponent();
 
+	// Called every frame
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
 protected: 
-	//UPROPERTY(Replicated)
-	//TArray<FString> Items;
+	
+	TArray<int32> Items;
+	
+	
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -28,7 +35,14 @@ protected:
 public:	
 	//bool AddItem(class AItem* Item);
 	//void Item(class AItem* Item);
-	TArray<int32> Items;
-	static void ShowInventoryComp();
+	//static TArray<int32> Items;
+	void ShowInventoryComp();
+	float TimeRemaining;
+	void ShowTime();
+	void AddTime(float Value);
+
+	UPROPERTY()
+	UInputComponent* PlayerInputComponent = nullptr;
+	void SetupPlayerInput();
 		
 };
