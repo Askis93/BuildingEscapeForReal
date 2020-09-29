@@ -7,6 +7,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/InputComponent.h"
 #include "GameFramework/Controller.h"
+#include "InventoryComponent.h"
 #include "Engine.h"
 
 // Sets default values
@@ -145,6 +146,7 @@ void ACharacter_BuildingESC::ShowInventory()
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("This is your inventory"));
 	}
+	UInventoryComponent::ShowInventoryComp();
 
 }
 

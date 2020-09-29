@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "ItemNew.h"
+#include "Containers/Array.h"
 #include "InventoryComponent.generated.h"
 
 
@@ -18,14 +20,15 @@ public:
 
 protected: 
 	//UPROPERTY(Replicated)
-	//TArray<class AItem*> Items;
+	//TArray<FString> Items;
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
 public:	
 	//bool AddItem(class AItem* Item);
-	//bool Item(class AItem* Item);
-
+	//void Item(class AItem* Item);
+	TArray<int32> Items;
+	static void ShowInventoryComp();
 		
 };
