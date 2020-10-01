@@ -26,6 +26,10 @@ public:
 	//Remove, inventory in component
 	//TArray<FString> Inventory;
 
+	class UInventoryComponent* PlayerInventoryComp = nullptr;
+
+	class ULineTracer* LineTraceComp;
+
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 		USpringArmComponent* SpringArmComp;
@@ -66,12 +70,6 @@ protected:
 
 	UPROPERTY()
 	bool bIsSprinting = false;
-
-	class ULineTracer* LineTraceComp;
-
-	class UInventoryComponent* PlayerInventoryComp;
-
-	
 
 	
 public:	

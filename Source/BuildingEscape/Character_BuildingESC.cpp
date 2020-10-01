@@ -28,7 +28,6 @@ ACharacter_BuildingESC::ACharacter_BuildingESC()
 
 	LineTraceComp = CreateDefaultSubobject<ULineTracer>(TEXT("LineTraceComponent"));
 
-	
 
 	SprintSpeedMulti = 1.6f;
 	BaseTurnRate = 45.f;
@@ -70,13 +69,13 @@ void ACharacter_BuildingESC::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	PlayerInputComponent->BindAxis("TurnAtRate", this, &ACharacter_BuildingESC::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &ACharacter_BuildingESC::LookUpRate);
 
-	//PlayerInventoryComp = GetOwner()->FindComponentByClass<UInventoryComponent>();
+	
 }
 
 UInventoryComponent* ACharacter_BuildingESC::GetInventoryComp()
 {
+	if (PlayerInventoryComp == nullptr)
 	UE_LOG(LogTemp, Warning, TEXT("InventCOMPSET!"));
-
 	return PlayerInventoryComp;
 }
 

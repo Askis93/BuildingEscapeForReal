@@ -42,7 +42,7 @@ public:
 	void AddTime(float Value);
 
 	UPROPERTY()
-	UInputComponent* PlayerInputComponent = nullptr;
+	UInputComponent* PlayerInputComponent;
 	void SetupPlayerInput();
 		
 };

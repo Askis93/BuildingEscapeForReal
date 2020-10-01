@@ -24,7 +24,7 @@ void APickUps::UseItem(ACharacter_BuildingESC* Player)
 	if (Player)
 	{
 		UE_LOG(LogTemp, Error, TEXT("PlayerHere"));
-		class UInventoryComponent* InvenComp = Player->GetInventoryComp();
+		class UInventoryComponent* InvenComp = Player->PlayerInventoryComp;
 		if (InvenComp)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("ARE YOU REALLY?!"));
