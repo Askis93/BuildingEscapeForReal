@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Character_BuildingESC.h"
+#include "InventoryComponent.h"
 //#include "Components/StaticMeshComponent.h"
 #include "PickUps.generated.h"
 
@@ -17,9 +18,13 @@ public:
 	// Sets default values for this actor's properties
 	APickUps();
 
+	class UInventoryComponent* InvenComp;
+
 protected:
 	UPROPERTY(EditAnywhere)
 		class UStaticMeshComponent* MeshComp;
+
+	
 
 	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemType")
 		FString ItemType;*/
@@ -30,6 +35,6 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
-	void UseItem(class ACharacter_BuildingESC* Player);
+	void AddToInv(class ACharacter_BuildingESC* Player);
 
 };

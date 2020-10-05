@@ -7,6 +7,7 @@
 #include "Components/InputComponent.h"
 #include "ItemNew.h"
 #include "Containers/Array.h"
+#include "PickUps.h"
 #include "GameFramework/PlayerController.h"
 #include "InventoryComponent.generated.h"
 
@@ -25,7 +26,7 @@ public:
 
 protected: 
 	
-	TArray<int32> Items;
+	TArray<class APickUps*> Items;
 	
 	
 protected:
@@ -39,7 +40,7 @@ public:
 	void ShowInventoryComp();
 	float TimeRemaining;
 	void ShowTime();
-	void AddTime(float Value);
+	void AddItemToInventory(class APickUps* Item);
 
 	UPROPERTY()
 	UInputComponent* PlayerInputComponent;

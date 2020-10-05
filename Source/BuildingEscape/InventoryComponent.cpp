@@ -19,7 +19,7 @@ void UInventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	TimeRemaining -= 0.01f;
+	TimeRemaining -= 0.001f;
 }
 
 void UInventoryComponent::BeginPlay()
@@ -48,20 +48,21 @@ void UInventoryComponent::ShowTime()
 	}
 }
 
-void UInventoryComponent::AddTime(float Value)
+void UInventoryComponent::AddItemToInventory(APickUps* Item)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Please work"));
-	TimeRemaining += 500.0f;
+	Items.Add(Item);
+	Item->Destroy();
 }
 
 
 void UInventoryComponent::ShowInventoryComp()
 {
-	for (int32 i : Items)
+	for (class APickUps* item : Items)
 	{
+		FString ItemInArray = item->GetName();
 		if (GEngine)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Turquoise, TEXT("TEST"));
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Turquoise, *ItemInArray);
 		}
 	}
 	if (GEngine)

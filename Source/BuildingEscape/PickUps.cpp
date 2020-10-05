@@ -2,6 +2,7 @@
 
 
 #include "PickUps.h"
+#include "InventoryComponent.h"
 #include "Components/StaticMeshComponent.h"
 
 // Sets default values
@@ -18,17 +19,17 @@ void APickUps::BeginPlay()
 	
 }
 
-void APickUps::UseItem(ACharacter_BuildingESC* Player)
+void APickUps::AddToInv(ACharacter_BuildingESC* Player)
 {
-	UE_LOG(LogTemp, Warning, TEXT("AddingTime"));
+	UE_LOG(LogTemp, Warning, TEXT("Add to inventory"));
 	if (Player)
 	{
 		UE_LOG(LogTemp, Error, TEXT("PlayerHere"));
-		class UInventoryComponent* InvenComp = Player->PlayerInventoryComp;
+		InvenComp = Player->PlayerInventoryComp;
 		if (InvenComp)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("ARE YOU REALLY?!"));
-			InvenComp->AddTime(150.0f);
+			InvenComp->AddItemToInventory(this);
 		}
 	}
 }

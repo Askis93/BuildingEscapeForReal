@@ -28,6 +28,8 @@ ACharacter_BuildingESC::ACharacter_BuildingESC()
 
 	LineTraceComp = CreateDefaultSubobject<ULineTracer>(TEXT("LineTraceComponent"));
 
+	PlayerInventoryComp = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
+
 
 	SprintSpeedMulti = 1.6f;
 	BaseTurnRate = 45.f;
@@ -74,7 +76,7 @@ void ACharacter_BuildingESC::SetupPlayerInputComponent(UInputComponent* PlayerIn
 
 UInventoryComponent* ACharacter_BuildingESC::GetInventoryComp()
 {
-	if (PlayerInventoryComp == nullptr)
+	if (PlayerInventoryComp)
 	UE_LOG(LogTemp, Warning, TEXT("InventCOMPSET!"));
 	return PlayerInventoryComp;
 }
@@ -162,10 +164,10 @@ void ACharacter_BuildingESC::BeginPickUp()
 	if (Actor)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("HIT ACTOR: %s"), *Actor->GetName());
-		if (APickUps* PickUp = Cast<APickUps>(Actor))
+		if (class APickUps* PickUp = Cast<APickUps>(Actor))
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Actor is a pickup"));
-			PickUp->UseItem(this);
+			PickUp->AddToInv(this);
 		}
 	}
 }

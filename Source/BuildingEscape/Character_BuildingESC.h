@@ -9,10 +9,6 @@
 #include "InventoryComponent.h"
 #include "Character_BuildingESC.generated.h"
 
-class USpringArmComponent;
-class UCameraComponent;
-class USkeletalMeshComponent;
-
 UCLASS()
 class BUILDINGESCAPE_API ACharacter_BuildingESC : public ACharacter
 {
@@ -26,19 +22,19 @@ public:
 	//Remove, inventory in component
 	//TArray<FString> Inventory;
 
-	class UInventoryComponent* PlayerInventoryComp = nullptr;
+	class UInventoryComponent* PlayerInventoryComp;
 
 	class ULineTracer* LineTraceComp;
 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
-		USpringArmComponent* SpringArmComp;
+		class USpringArmComponent* SpringArmComp;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
-		UCameraComponent* CameraComp;
+		class UCameraComponent* CameraComp;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player")
-		USkeletalMeshComponent* PlayerMesh;
+		class USkeletalMeshComponent* PlayerMesh;
 
 protected:
 	void MoveForward(float Value);
