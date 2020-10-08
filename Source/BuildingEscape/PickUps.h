@@ -7,6 +7,7 @@
 #include "Character_BuildingESC.h"
 #include "InventoryComponent.h"
 //#include "Components/StaticMeshComponent.h"
+#include "Components/BoxComponent.h"
 #include "PickUps.generated.h"
 
 UCLASS()
@@ -23,7 +24,8 @@ public:
 protected:
 	UPROPERTY(EditAnywhere)
 		class UStaticMeshComponent* MeshComp;
-
+	UPROPERTY(EditAnywhere)
+		class UBoxComponent* CollisionComp;
 	
 
 	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "ItemType")

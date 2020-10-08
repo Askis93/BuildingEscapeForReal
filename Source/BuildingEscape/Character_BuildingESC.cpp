@@ -4,9 +4,14 @@
 #include "Character_BuildingESC.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "GameFramework/Controller.h"
+
+//Components
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/InputComponent.h"
-#include "GameFramework/Controller.h"
+#include "Components/ActorComponent.h"
+
+//Own gamefiles
 #include "InventoryComponent.h"
 #include "LineTracer.h"
 #include "PickUps.h"

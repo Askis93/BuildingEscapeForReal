@@ -8,8 +8,13 @@
 // Sets default values
 APickUps::APickUps()
 {
+	
+
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
 	RootComponent = MeshComp;
+
+	CollisionComp = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionComponent"));
+	CollisionComp->SetupAttachment(RootComponent);
 }
 
 // Called when the game starts or when spawned
