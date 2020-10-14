@@ -34,16 +34,15 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
-	//bool AddItem(class AItem* Item);
-	//void Item(class AItem* Item);
-	//static TArray<int32> Items;
 	void ShowInventoryComp();
-	float TimeRemaining;
-	void ShowTime();
+	//float TimeRemaining;
+	//void ShowTime();
 	void AddItemToInventory(class APickUps* Item);
+	void RemoveItemFromInventory(class APickUps* Item);
+	bool CheckInventory(class APickUps* item);
 
 	UPROPERTY()
-	UInputComponent* PlayerInputComponent;
+	class UInputComponent* PlayerInputComponent;
 	void SetupPlayerInput();
 		
 };

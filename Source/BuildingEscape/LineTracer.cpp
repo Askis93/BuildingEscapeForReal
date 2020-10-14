@@ -50,7 +50,7 @@ AActor* ULineTracer::LineTraceSingle(FVector Start, FVector End, bool ShowDebugL
 	AActor* Actor = LineTraceSingle(Start, End);
 	if (ShowDebugLine)
 	{
-		DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 3.0f, 0, 5.0f);
+		//DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 3.0f, 0, 5.0f);
 	}
 	return Actor;
 }

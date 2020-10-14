@@ -35,8 +35,8 @@ void UGrabber::SetupInputComponent()
 	if (InputComponent)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Input component found on: %s"), *GetOwner()->GetName());
-		InputComponent->BindAction("Grab", IE_Pressed, this, &UGrabber::Grab);
-		InputComponent->BindAction("Grab", IE_Released, this, &UGrabber::Release);
+		InputComponent->BindAction("PickUp", IE_Pressed, this, &UGrabber::Grab);
+		InputComponent->BindAction("PickUp", IE_Released, this, &UGrabber::Release);
 	}
 	else
 	{

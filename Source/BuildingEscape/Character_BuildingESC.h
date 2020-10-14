@@ -7,6 +7,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Containers/Array.h"
 #include "InventoryComponent.h"
+#include "DoorOpenByKey.h"
 #include "Character_BuildingESC.generated.h"
 
 UCLASS()
@@ -36,6 +37,18 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Player")
 		class USkeletalMeshComponent* PlayerMesh;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Trigger Capsule")
+		class UCapsuleComponent* TriggerCapsule;
+
+	class ADoorOpenByKey* CurrentDoor;
+
+	
+	UFUNCTION()
+		void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+		void OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
 protected:
 	void MoveForward(float Value);
 	void MoveRight(float Value);
@@ -51,9 +64,8 @@ protected:
 	void CrouchUp();
 
 	void BeginPickUp();
-	//void EndPickUp();
 
-	//void ShowInventory();
+	void Interact();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Camera")
 	float BaseTurnRate;
@@ -74,6 +86,8 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UInventoryComponent* GetInventoryComp();
+
+
 	
 	
 	

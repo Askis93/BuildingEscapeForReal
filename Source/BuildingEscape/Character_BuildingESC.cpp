@@ -5,6 +5,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/Controller.h"
+#include "Engine.h"
 
 //Components
 #include "Components/SkeletalMeshComponent.h"
@@ -12,10 +13,10 @@
 #include "Components/ActorComponent.h"
 
 //Own gamefiles
-#include "InventoryComponent.h"
 #include "LineTracer.h"
 #include "PickUps.h"
-#include "Engine.h"
+
+
 
 // Sets default values
 ACharacter_BuildingESC::ACharacter_BuildingESC()
@@ -35,6 +36,13 @@ ACharacter_BuildingESC::ACharacter_BuildingESC()
 
 	PlayerInventoryComp = CreateDefaultSubobject<UInventoryComponent>(TEXT("InventoryComponent"));
 
+	TriggerCapsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("TriggerCapsule"));
+	TriggerCapsule->InitCapsuleSize(55.0f, 96.0f);
+	TriggerCapsule->SetCollisionProfileName(TEXT("Trigger"));
+	TriggerCapsule->SetupAttachment(RootComponent);
+
+	TriggerCapsule->OnComponentBeginOverlap.AddDynamic(this, &ACharacter_BuildingESC::OnOverlapBegin);
+	TriggerCapsule->OnComponentEndOverlap.AddDynamic(this, &ACharacter_BuildingESC::OnOverlapEnd);
 
 	SprintSpeedMulti = 1.6f;
 	BaseTurnRate = 45.f;
@@ -67,9 +75,8 @@ void ACharacter_BuildingESC::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	PlayerInputComponent->BindAxis("MoveRight", this, &ACharacter_BuildingESC::MoveRight);
 
 	PlayerInputComponent->BindAction("PickUp", IE_Pressed, this, &ACharacter_BuildingESC::BeginPickUp);
-	//PlayerInputComponent->BindAction("PickUp", IE_Released, this, &ACharacter_BuildingESC::EndPickUp);
 
-	//PlayerInputComponent->BindAction("ShowInventory", IE_Pressed, this, &ACharacter_BuildingESC::Interact);
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &ACharacter_BuildingESC::Interact);
 
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
@@ -86,6 +93,22 @@ UInventoryComponent* ACharacter_BuildingESC::GetInventoryComp()
 	return PlayerInventoryComp;
 }
 
+
+void ACharacter_BuildingESC::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr) && (OtherActor->GetClass()->IsChildOf(ADoorOpenByKey::StaticClass())))
+	{
+		CurrentDoor = Cast<ADoorOpenByKey>(OtherActor);
+	}
+}
+
+void ACharacter_BuildingESC::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr))
+	{
+		CurrentDoor = NULL;
+	}
+}
 
 void ACharacter_BuildingESC::MoveForward(float Value)
 {
@@ -174,25 +197,15 @@ void ACharacter_BuildingESC::BeginPickUp()
 			UE_LOG(LogTemp, Warning, TEXT("Actor is a pickup"));
 			PickUp->AddToInv(this);
 		}
+		// Add For Grabber
 	}
 }
-//
-//void ACharacter_BuildingESC::EndPickUp()
-//{
-//	bIsPickingUp = false;
-//	if (GEngine)
-//	{
-//		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("PickUp Released"));
-//	}
-//}
+void ACharacter_BuildingESC::Interact()
+{
+	if (CurrentDoor)
+	{
+		CurrentDoor->CheckPlayerInventory(this);
+	}
+}
 
-//void ACharacter_BuildingESC::ShowInventory()
-//{
-//	if (GEngine)
-//	{
-//		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("This is your inventory"));
-//	}
-//	UInventoryComponent::ShowInventoryComp();
-//
-//}
 

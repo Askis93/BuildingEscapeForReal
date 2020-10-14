@@ -8,8 +8,6 @@
 // Sets default values
 APickUps::APickUps()
 {
-	
-
 	MeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComponent"));
 	RootComponent = MeshComp;
 
