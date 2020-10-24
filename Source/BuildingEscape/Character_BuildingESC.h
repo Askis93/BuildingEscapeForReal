@@ -20,8 +20,6 @@ public:
 	ACharacter_BuildingESC();
 
 	bool bIsPickingUp = false;
-	//Remove, inventory in component
-	//TArray<FString> Inventory;
 
 	class UInventoryComponent* PlayerInventoryComp;
 
@@ -40,7 +38,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Trigger Capsule")
 		class UCapsuleComponent* TriggerCapsule;
 
-	class ADoorOpenByKey* CurrentDoor;
+	class ADoorOpenByKey* CurrentDoor = nullptr;
 
 	
 	UFUNCTION()
@@ -85,7 +83,7 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	UInventoryComponent* GetInventoryComp();
+	class UInventoryComponent* GetInventoryComp();
 
 
 	

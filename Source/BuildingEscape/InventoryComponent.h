@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Components/InputComponent.h"
-#include "ItemNew.h"
 #include "Containers/Array.h"
 #include "PickUps.h"
 #include "GameFramework/PlayerController.h"
@@ -27,19 +26,16 @@ public:
 protected: 
 	
 	TArray<class APickUps*> Items;
-	
-	
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
 public:	
 	void ShowInventoryComp();
-	//float TimeRemaining;
-	//void ShowTime();
 	void AddItemToInventory(class APickUps* Item);
-	void RemoveItemFromInventory(class APickUps* Item);
-	bool CheckInventory(class APickUps* item);
+	void RemoveItemFromInventory();
+	bool CheckInventory(class APickUps* Item);
 
 	UPROPERTY()
 	class UInputComponent* PlayerInputComponent;

@@ -15,6 +15,7 @@
 //Own gamefiles
 #include "LineTracer.h"
 #include "PickUps.h"
+#include "ButtonActor.h"
 
 
 
@@ -23,14 +24,17 @@ ACharacter_BuildingESC::ACharacter_BuildingESC()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComp"));
-	SpringArmComp->SetupAttachment(RootComponent);
 
-	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
-	CameraComp->SetupAttachment(SpringArmComp);
+	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
+	CameraComp->SetupAttachment(RootComponent);
+	CameraComp->SetRelativeLocation(FVector(0.0f, 0.0f, 150.0f));
+	CameraComp->bUsePawnControlRotation = true;
+
+	/*CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
+	CameraComp->SetupAttachment(SpringArmComp);*/
 
 	PlayerMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("PlayerMesh"));
-	PlayerMesh->SetupAttachment(RootComponent);
+	PlayerMesh->SetupAttachment(CameraComp);
 
 	LineTraceComp = CreateDefaultSubobject<ULineTracer>(TEXT("LineTraceComponent"));
 
@@ -48,12 +52,6 @@ ACharacter_BuildingESC::ACharacter_BuildingESC()
 	BaseTurnRate = 45.f;
 	BaseLookUpRate = 45.f;
 }
-
-//void ACharacter_BuildingESC::AddTime(float Value)
-//{
-//
-//}
-
 
 
 // Called to bind functionality to input
@@ -106,7 +104,7 @@ void ACharacter_BuildingESC::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, A
 {
 	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr))
 	{
-		CurrentDoor = NULL;
+		CurrentDoor = nullptr;
 	}
 }
 
@@ -158,36 +156,36 @@ void ACharacter_BuildingESC::EndSprint()
 
 void ACharacter_BuildingESC::CrouchDown()
 {
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Crouching"));
-	}
+	//if (GEngine)
+	//{
+	//	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Crouching"));
+	//}
 	Crouch();
 }
 
 void ACharacter_BuildingESC::CrouchUp()
 {
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Stopped Crouching"));
-	}
+	//if (GEngine)
+	//{
+	//	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT("Stopped Crouching"));
+	//}
 	UnCrouch();
 }
 
 void ACharacter_BuildingESC::BeginPickUp()
 {
 	bIsPickingUp = true;
-	if (GEngine)
+	/*if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, TEXT("PickUp Pressed"));
-	}
+	}*/
 	FVector PlayerViewpointLocation;
 	FRotator PlayerViewpointRotation;
 
 	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(OUT PlayerViewpointLocation, OUT PlayerViewpointRotation);
 	
 	FVector Start = PlayerViewpointLocation;
-	FVector End = PlayerViewpointLocation + PlayerViewpointRotation.Vector() * 200.f;
+	FVector End = PlayerViewpointLocation + PlayerViewpointRotation.Vector() * 250.f;
 	AActor* Actor = LineTraceComp->LineTraceSingle(Start, End, true);
 	if (Actor)
 	{
@@ -196,6 +194,11 @@ void ACharacter_BuildingESC::BeginPickUp()
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Actor is a pickup"));
 			PickUp->AddToInv(this);
+		}
+		else if (class AButtonActor* Button = Cast<AButtonActor>(Actor))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Actor is a button"));
+			Button->PressButton(this);
 		}
 		// Add For Grabber
 	}

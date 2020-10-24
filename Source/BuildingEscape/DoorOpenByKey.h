@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/BoxComponent.h"
+#include "Components/AudioComponent.h"
 #include "Character_BuildingESC.h"
 #include "InventoryComponent.h"
 #include "PickUps.h"
@@ -43,19 +44,18 @@ public:
 		class UBoxComponent* CollisionComp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "KeyToOpenDoor")
-		class APickUps* NeededKey;
+		TArray<class APickUps*> NeededKey;
 		
+	TArray<bool> DoIHaveAllKeys;
 
 	class UInventoryComponent* InvenComp;
 
 
 	float InitialYaw;
 	float CurrentYaw;
-	float AddRotation;
 
 	float InitialZ;
 	float CurrentZ;
-	float AddZ;
 
 
 	UPROPERTY(EditAnywhere)
@@ -69,5 +69,13 @@ public:
 		float DoorOpenSpeed = 1.f;
 
 	bool OpenTheDoor;
+
+	bool OpenDoorSound = false;
+
+	UPROPERTY(EditAnywhere)
+		class UAudioComponent* AudioComponent1 = nullptr;
+	UPROPERTY(EditAnywhere)
+		class UAudioComponent* AudioComponent2 = nullptr;
 	
+	TArray<UAudioComponent*> Sounds;
 };

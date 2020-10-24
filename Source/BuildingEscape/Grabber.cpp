@@ -84,6 +84,7 @@ void UGrabber::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 	if (PhysicsHandle->GrabbedComponent)
 	{
 		//Move the object we are holding
+		FVector ObjectLocation = GetPlayerReach() - FVector{100.f, 100.f, 100.f};
 		PhysicsHandle->SetTargetLocation(GetPlayerReach());
 	}	
 }

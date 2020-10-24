@@ -14,4 +14,11 @@ class BUILDINGESCAPE_API ACustomHUD : public AHUD
 {
 	GENERATED_BODY()
 	
+public:
+	virtual void DrawHUD() override;
+
+protected:
+	// This will be drawn at the center of the screen.
+	UPROPERTY(EditDefaultsOnly)
+		class UTexture2D* CrosshairTexture;
 };

@@ -4,6 +4,7 @@
 #include "DoorOpenByKey.h"
 #include "DrawDebugHelpers.h"
 #include "Kismet/GameplayStatics.h"
+#include "Engine.h"
 #include "Components/BoxComponent.h"
 
 
@@ -16,16 +17,13 @@ ADoorOpenByKey::ADoorOpenByKey()
 	DoorMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("DoorMesh"));
 	RootComponent = DoorMesh;
 
+	KeyMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("KeyMesh"));
+	KeyMesh->SetupAttachment(DoorMesh);
 
 	CollisionComp = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionComp"));
 	CollisionComp->InitBoxExtent(FVector(100, 100, 150));
 	CollisionComp->SetupAttachment(DoorMesh);
 
-	
-	
-	//OpenUp = 0.f;
-	
-	
 }
 
 // Called when the game starts or when spawned
@@ -33,13 +31,28 @@ void ADoorOpenByKey::BeginPlay()
 {
 	Super::BeginPlay();	
 
-	InitialYaw = this->GetActorRotation().Yaw;
+	InitialYaw = DoorMesh->GetRelativeRotation().Yaw;
 	CurrentYaw = InitialYaw;
 	OpenAngle += InitialYaw;
 
-	InitialYaw = this->GetActorLocation().Z;
+	InitialZ = DoorMesh->GetRelativeLocation().Z;
 	CurrentZ = InitialZ;
 	OpenUp += InitialZ;
+
+	this->GetComponents<UAudioComponent>(Sounds);
+
+	for (UAudioComponent* audio : Sounds)
+	{
+		if (AudioComponent1 == nullptr)
+		{
+			AudioComponent1 = audio;
+		}
+		else
+		{
+			AudioComponent2 = audio;
+		}
+	}
+	
 }
 
 // Called every frame
@@ -63,33 +76,77 @@ void ADoorOpenByKey::CheckPlayerInventory(ACharacter_BuildingESC* Player)
 {
 	if (Player)
 	{
-		if (!NeededKey)
+		if (NeededKey.Num() == 0)
 		{
 			return;
 		}
-		UE_LOG(LogTemp, Error, TEXT("WILL THIS PLEASE WORK!"));
 		InvenComp = Player->PlayerInventoryComp;
 		if (InvenComp)
 		{
-			
-			UE_LOG(LogTemp, Error, TEXT("CHECKING FOR KEY"));
-			if (InvenComp->CheckInventory(NeededKey))
+			for (class APickUps* Key : NeededKey)
 			{
-				InvenComp->RemoveItemFromInventory(NeededKey);
+				if (!InvenComp->CheckInventory(Key))
+				{
+					DoIHaveAllKeys.Add(false);
+					break;
+				}
+				else
+				{
+					DoIHaveAllKeys.Add(true);
+				}
+			}
+			if(!DoIHaveAllKeys.Contains(false))
+			{
 				OpenTheDoor = true;
+				if (GEngine)
+				{
+					GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("Door Opened"), true, { 1.5, 1.5 });
+				}
+				InvenComp->RemoveItemFromInventory();
+				/*for (class APickUps* Key : NeededKey)
+				{
+					if (Key == nullptr)
+					{
+						if (GEngine)
+						{
+							GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Magenta, TEXT("Key dissaperred somehow "), true, { 1.5, 1.5 });
+						}
+					}
+					InvenComp->RemoveItemFromInventory(Key);
+				}*/
+			}
+			else
+			{
+				if (GEngine)
+				{
+					GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("More keys are needed"), true, { 1.5, 1.5 });
+				}
+				if (!AudioComponent2) { return; }
+				else { AudioComponent2->Play(); }
+
 			}
 		}
 	}
-
+	DoIHaveAllKeys.Empty();
 }
 
 void ADoorOpenByKey::OpenDoor(float delta)
 {
-	CurrentYaw = DoorMesh->GetRelativeRotation().Yaw;
+	CurrentYaw = FMath::FInterpTo(CurrentYaw, OpenAngle, delta, DoorOpenSpeed);
+	FRotator DoorRotation = DoorMesh->GetRelativeRotation();
+	//AddRotation = -1 * delta * 80;
 
-	AddRotation = -1 * delta * 80;
+	DoorRotation.Yaw = CurrentYaw;
+	DoorMesh->SetRelativeRotation(DoorRotation);
 
-	if (FMath::IsNearlyEqual(CurrentYaw, OpenAngle, 1.f))
+	if (!AudioComponent1) { return; }
+	if (!OpenDoorSound)
+	{
+		AudioComponent1->Play();
+		OpenDoorSound = true;
+	}
+
+	/*if (FMath::IsNearlyEqual(CurrentYaw, OpenAngle, 1.f))
 	{
 
 	}
@@ -97,12 +154,26 @@ void ADoorOpenByKey::OpenDoor(float delta)
 	{
 		FRotator NewRotation = FRotator(0.f, AddRotation, 0.0f);
 		DoorMesh->AddRelativeRotation(NewRotation);
-	}
+	}*/
 }
 
 void ADoorOpenByKey::OpenUpwards(float delta)
 {
-	CurrentZ = DoorMesh->GetRelativeLocation().Z;
+	CurrentZ = FMath::FInterpTo(CurrentZ, OpenUp, delta, DoorOpenSpeed);
+	FVector DoorLocation = DoorMesh->GetRelativeLocation();
+	//AddRotation = -1 * delta * 80;
+
+	DoorLocation.Z = CurrentZ;
+	DoorMesh->SetRelativeLocation(DoorLocation);
+
+	if (!AudioComponent1) { return; }
+	if (!OpenDoorSound)
+	{
+		AudioComponent1->Play();
+		OpenDoorSound = true;
+	}
+
+	/*CurrentZ = DoorMesh->GetRelativeLocation().Z;
 
 	AddZ = 1 * delta * 80;
 
@@ -114,7 +185,7 @@ void ADoorOpenByKey::OpenUpwards(float delta)
 	{
 		FVector NewVector = FVector(0.f, 0.f, AddZ);
 		DoorMesh->AddRelativeLocation(NewVector);
-	}
+	}*/
 	
 }
 

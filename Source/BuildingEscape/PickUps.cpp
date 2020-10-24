@@ -24,14 +24,11 @@ void APickUps::BeginPlay()
 
 void APickUps::AddToInv(ACharacter_BuildingESC* Player)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Add to inventory"));
 	if (Player)
 	{
-		UE_LOG(LogTemp, Error, TEXT("PlayerHere"));
 		InvenComp = Player->PlayerInventoryComp;
 		if (InvenComp)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("ARE YOU REALLY?!"));
 			InvenComp->AddItemToInventory(this);
 		}
 	}
